@@ -1,4 +1,4 @@
-var ScreenShotReporter = require('protractor-screenshot-reporter-with-postprocessing');
+var ScreenShotReporter = require('protractor-html-screenshot-reporter');
 var path = require('path');
 // A reference configuration file.
 exports.config = {
