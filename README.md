@@ -10,10 +10,10 @@ The `protractor-html-screenshot-reporter` module is available via npm:
 $ npm install protractor-html-screenshot-reporter --save-dev
 ```
 
-In your Protractor configuration file, register `protractor-screenshot-reporter` in Jasmine:
+In your Protractor configuration file, register `protractor-html-screenshot-reporter` in Jasmine:
 
 ```javascript
-var ScreenShotReporter = require('protractor-screenshot-reporter');
+var ScreenShotReporter = require('protractor-html-screenshot-reporter');
 
 exports.config = {
    // your config here ...
@@ -74,7 +74,7 @@ new ScreenShotReporter({
 });
 ```
 
-If you omit the meta data builder, the default implementation is used (see https://github.com/swissmanu/protractor-screenshot-reporter/blob/master/index.js#L42).
+If you omit the meta data builder, the default implementation is used
 
 
 ## HTML Reporter
