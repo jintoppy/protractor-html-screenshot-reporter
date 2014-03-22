@@ -13,14 +13,14 @@ $ npm install protractor-html-screenshot-reporter --save-dev
 In your Protractor configuration file, register `protractor-html-screenshot-reporter` in Jasmine:
 
 ```javascript
-var ScreenShotReporter = require('protractor-html-screenshot-reporter');
+var HtmlReporter = require('protractor-html-screenshot-reporter');
 
 exports.config = {
    // your config here ...
 
    onPrepare: function() {
       // Add a screenshot reporter and store screenshots to `/tmp/screnshots`:
-      jasmine.getEnv().addReporter(new ScreenShotReporter({
+      jasmine.getEnv().addReporter(new HtmlReporter({
          baseDirectory: '/tmp/screenshots'
       }));
    }

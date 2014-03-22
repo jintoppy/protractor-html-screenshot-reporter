@@ -149,7 +149,7 @@ function reportSpecResults(spec) {
 				if(err) {
 					throw new Error('Could not create directory ' + directory);
 				} else {
-					util.addMetaData(metaData, metaDataPath);
+					util.addMetaData(metaData, metaDataPath, descriptions);
 					util.storeScreenShot(png, screenShotPath);
 					util.storeMetaData(metaData, metaDataPath);
 				}
