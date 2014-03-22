@@ -84,7 +84,7 @@ On running the task via grunt, screenshot reporter will be generating json and p
 With this postprocessing, you will get a json which has all the metadata, and also an html page showing the results. 
 
 
-![test report in html](testreporter.png "test report")
+![test report in html](https://raw.githubusercontent.com/jintoppy/protractor-html-screenshot-reporter/master/testreporter.png "test report")
 
 Please see the examples folder for a sample usage. 
 
