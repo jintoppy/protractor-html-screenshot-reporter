@@ -1,8 +1,6 @@
-# Built on top of Screenshot Reporter for Protractor with HTML Reports and Screenshots
+# HTML Reporter with Screenshots for Protractor
 
 This is built on top of Screenshot Reporter for Protractor https://github.com/swissmanu/protractor-screenshot-reporter
-
-For documentation, please see the original repository
 
 
 ## Usage
@@ -12,10 +10,10 @@ The `protractor-html-screenshot-reporter` module is available via npm:
 $ npm install protractor-html-screenshot-reporter --save-dev
 ```
 
-In your Protractor configuration file, register `protractor-screenshot-reporter-with-postprocessing` in Jasmine:
+In your Protractor configuration file, register `protractor-screenshot-reporter` in Jasmine:
 
 ```javascript
-var ScreenShotReporter = require('protractor-html-screenshot-reporter');
+var ScreenShotReporter = require('protractor-screenshot-reporter');
 
 exports.config = {
    // your config here ...
@@ -29,7 +27,57 @@ exports.config = {
 }
 ```
 
-## Postprocess Meta Data
+## Configuration
+### Base Directory (mandatory)
+You have to pass a directory path as parameter when creating a new instance of
+the screenshot reporter:
+
+```javascript
+var reporter = new ScreenShotReporter({
+   baseDirectory: '/tmp/screenshots'
+});
+```
+
+If the given directory does not exists, it is created automatically as soon as a screenshot needs to be stored.
+
+### Path Builder (optional)
+The function passed as second argument to the constructor is used to build up paths for screenshot files:
+
+```javascript
+var path = require('path');
+
+new ScreenShotReporter({
+   baseDirectory: '/tmp/screenshots'
+   , pathBuilder: function pathBuilder(spec, descriptions, results, capabilities) {
+      // Return '<browser>/<specname>' as path for screenshots:
+      // Example: 'firefox/list-should work'.
+      return path.join(capabilities.caps_.browser, descriptions.join('-'));
+   }
+});
+```
+If you omit the path builder, a [GUID](http://de.wikipedia.org/wiki/Globally_Unique_Identifier) is used by default instead.
+
+
+### Meta Data Builder (optional)
+You can modify the contents of the JSON meta data file by passing a function `metaDataBuilder` function as third constructor parameter:
+
+```javascript
+new ScreenShotReporter({
+   baseDirectory: '/tmp/screenshots'
+   , metaDataBuilder: function metaDataBuilder(spec, descriptions, results, capabilities) {
+      // Return the description of the spec and if it has passed or not:
+      return {
+         description: descriptions.join(' ')
+         , passed: results.passed()
+      };
+   }
+});
+```
+
+If you omit the meta data builder, the default implementation is used (see https://github.com/swissmanu/protractor-screenshot-reporter/blob/master/index.js#L42).
+
+
+## HTML Reporter
 
 On running the task via grunt, screenshot reporter will be generating json and png files for each test. 
 
@@ -51,15 +99,11 @@ $ grunt test:e2e
 
 After the test run, you can see that, a screenshots folder will be created with all the reports generated. 
 
-Documentation for all options are available in the main repository (protractor-screenshot-reporter)
-
 
 ## License
+Copyright (c) 2014 Jinto Jose <jintoppy@gmail.com>
 Copyright (c) 2014 Manuel Alabor <manuel@alabor.me>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
