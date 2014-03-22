@@ -1,11 +1,11 @@
 {
-  "name": "protractor-screenshot-reporter-with-postprocessing",
-  "version": "0.0.3",
-  "description": "Use the screenshot reporter to capture screenshots from your Selenium nodes after each executed Protractor test case, and see the result in HTML",
+  "name": "protractor-html-screenshot-reporter",
+  "version": "0.0.1",
+  "description": "An npm module and grunt plugin which generates your Protractor test reports in HTML with screenshots",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jintoppy/protractor-screenshot-reporter-with-postprocessing"
+    "url": "https://github.com/jintoppy/protractor-html-screenshot-reporter"
   },
   "dependencies": {
     "mkdirp": "~0.3.5"
@@ -16,12 +16,13 @@
     "protractor",
     "jasmine",
     "reporter",
+    "gruntplugin",
     "protractor html report"
   ],
   "author": "Jinto Jose <jintoppy@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jintoppy/protractor-screenshot-reporter-with-postprocessing/issues"
+    "url": "https://github.com/jintoppy/protractor-html-screenshot-reporter/issues"
   },
-  "homepage": "https://github.com/jintoppy/protractor-screenshot-reporter-with-postprocessing"
+  "homepage": "https://github.com/jintoppy/protractor-html-screenshot-reporter"
 }

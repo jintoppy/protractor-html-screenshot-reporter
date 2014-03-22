@@ -6,16 +6,16 @@ For documentation, please see the original repository
 
 
 ## Usage
-The `protractor-screenshot-reporter-with-postprocessing` is available via npm:
+The `protractor-html-screenshot-reporter` module is available via npm:
 
 ```bash
-$ npm install protractor-screenshot-reporter-with-postprocessing --save-dev
+$ npm install protractor-html-screenshot-reporter --save-dev
 ```
 
 In your Protractor configuration file, register `protractor-screenshot-reporter-with-postprocessing` in Jasmine:
 
 ```javascript
-var ScreenShotReporter = require('protractor-screenshot-reporter-with-postprocessing');
+var ScreenShotReporter = require('protractor-html-screenshot-reporter');
 
 exports.config = {
    // your config here ...
