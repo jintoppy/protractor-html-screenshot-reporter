@@ -95,6 +95,8 @@ function ScreenshotReporter(options) {
 	this.metaDataBuilder = options.metaDataBuilder || defaultMetaDataBuilder;
 	this.takeScreenShotsForSkippedSpecs =
 		options.takeScreenShotsForSkippedSpecs || false;
+		this.takeScreenShotsOnlyForFailedSpecs =
+ 		options.takeScreenShotsOnlyForFailedSpecs || false;
 }
 
 /** Function: reportSpecResults
@@ -113,6 +115,10 @@ function reportSpecResults(spec) {
 	if(!self.takeScreenShotsForSkippedSpecs && results.skipped) {
 		return;
 	}
+
+	if(self.takeScreenShotsOnlyForFailedSpecs && results.passed()) {
+ 		return;
+ 	}
 
 	browser.takeScreenshot().then(function (png) {
 		browser.getCapabilities().then(function (capabilities) {

@@ -1,4 +1,4 @@
-var ScreenShotReporter = require('protractor-html-screenshot-reporter');
+var HtmlReporter = require('protractor-html-screenshot-reporter');
 var path = require('path');
 // A reference configuration file.
 exports.config = {
@@ -59,7 +59,7 @@ exports.config = {
 
   onPrepare: function() {
       // Add a screenshot reporter:
-      jasmine.getEnv().addReporter(new ScreenShotReporter({
+      jasmine.getEnv().addReporter(new HtmlReporter({
          baseDirectory: 'screenshots',
          metaDataBuilder: function(spec, descriptions, results, capabilities){
             var metaData = {

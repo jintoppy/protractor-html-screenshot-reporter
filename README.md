@@ -33,7 +33,7 @@ You have to pass a directory path as parameter when creating a new instance of
 the screenshot reporter:
 
 ```javascript
-var reporter = new ScreenShotReporter({
+var reporter = new HtmlReporter({
    baseDirectory: '/tmp/screenshots'
 });
 ```
@@ -46,7 +46,7 @@ The function passed as second argument to the constructor is used to build up pa
 ```javascript
 var path = require('path');
 
-new ScreenShotReporter({
+new HtmlReporter({
    baseDirectory: '/tmp/screenshots'
    , pathBuilder: function pathBuilder(spec, descriptions, results, capabilities) {
       // Return '<browser>/<specname>' as path for screenshots:
@@ -62,7 +62,7 @@ If you omit the path builder, a [GUID](http://de.wikipedia.org/wiki/Globally_Uni
 You can modify the contents of the JSON meta data file by passing a function `metaDataBuilder` function as third constructor parameter:
 
 ```javascript
-new ScreenShotReporter({
+new HtmlReporter({
    baseDirectory: '/tmp/screenshots'
    , metaDataBuilder: function metaDataBuilder(spec, descriptions, results, capabilities) {
       // Return the description of the spec and if it has passed or not:
@@ -75,6 +75,31 @@ new ScreenShotReporter({
 ```
 
 If you omit the meta data builder, the default implementation is used
+
+
+### Screenshots for skipped test cases (optional)
+You can define if you want capture screenshots from skipped test cases using the `takeScreenShotsForSkippedSpecs` option:
+
+```javascript
+new HtmlReporter({
+   baseDirectory: '/tmp/screenshots'
+   , takeScreenShotsForSkippedSpecs: true
+});
+```
+
+
+### Screenshots only for failed test cases (optional)
+ Also you can define if you want capture screenshots only from failed test cases using the `takeScreenShotsOnlyForFailedSpecs:` option:
+ 
+ ```javascript
+ new HtmlReporter({
+    baseDirectory: '/tmp/screenshots'
+    , takeScreenShotsOnlyForFailedSpecs: true
+ });
+ ```
+ 
+ Default is `false`.
+
 
 
 ## HTML Reporter
