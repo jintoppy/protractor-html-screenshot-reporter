@@ -77,8 +77,8 @@ new HtmlReporter({
 If you omit the meta data builder, the default implementation is used
 
 
-### Screenshots for skipped test cases (optional)
-You can define if you want capture screenshots from skipped test cases using the `takeScreenShotsForSkippedSpecs` option:
+### Report for skipped test cases (optional)
+You can define if you want report from skipped test cases using the `takeScreenShotsForSkippedSpecs` option:
 
 ```javascript
 new HtmlReporter({
@@ -97,6 +97,8 @@ Default is `false`.
     , takeScreenShotsOnlyForFailedSpecs: true
  });
  ```
+
+ If you set the value to `true`, the reporter for the passed test will still be generated, but, there will be no screenshot.
  
  Default is `false`.
 

@@ -97,6 +97,13 @@ function ScreenshotReporter(options) {
 		options.takeScreenShotsForSkippedSpecs || false;
 		this.takeScreenShotsOnlyForFailedSpecs =
  		options.takeScreenShotsOnlyForFailedSpecs || false;
+ 	this.finalOptions = {
+ 		takeScreenShotsOnlyForFailedSpecs: this.takeScreenShotsOnlyForFailedSpecs,
+ 		takeScreenShotsForSkippedSpecs: this.takeScreenShotsForSkippedSpecs,
+ 		metaDataBuilder: this.metaDataBuilder,
+ 		pathBuilder: this.pathBuilder,
+ 		baseDirectory: this.baseDirectory	
+ 	};
 }
 
 /** Function: reportSpecResults
@@ -115,10 +122,6 @@ function reportSpecResults(spec) {
 	if(!self.takeScreenShotsForSkippedSpecs && results.skipped) {
 		return;
 	}
-
-	if(self.takeScreenShotsOnlyForFailedSpecs && results.passed()) {
- 		return;
- 	}
 
 	browser.takeScreenshot().then(function (png) {
 		browser.getCapabilities().then(function (capabilities) {
@@ -155,8 +158,10 @@ function reportSpecResults(spec) {
 				if(err) {
 					throw new Error('Could not create directory ' + directory);
 				} else {
-					util.addMetaData(metaData, metaDataPath, descriptions);
-					util.storeScreenShot(png, screenShotPath);
+					util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
+					if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passed())) {
+						util.storeScreenShot(png, screenShotPath);
+					}	
 					util.storeMetaData(metaData, metaDataPath);
 				}
 			});

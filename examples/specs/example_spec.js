@@ -6,7 +6,7 @@ describe('angularjs homepage', function() {
 
     var greeting = element(by.binding('yourName'));
 
-    expect(greeting.getText()).toEqual('Hello Julie!');
+    expect(greeting.getText()).toEqual('Hello Julie hello!');
   });
 
   describe('todo list', function() {

@@ -61,6 +61,7 @@ exports.config = {
       // Add a screenshot reporter:
       jasmine.getEnv().addReporter(new HtmlReporter({
          baseDirectory: 'screenshots',
+         takeScreenShotsOnlyForFailedSpecs: true,
          metaDataBuilder: function(spec, descriptions, results, capabilities){
             var metaData = {
                 description: descriptions.join('|')
