@@ -86,7 +86,7 @@ new HtmlReporter({
    , takeScreenShotsForSkippedSpecs: true
 });
 ```
-
+Default is `false`.
 
 ### Screenshots only for failed test cases (optional)
  Also you can define if you want capture screenshots only from failed test cases using the `takeScreenShotsOnlyForFailedSpecs:` option:
