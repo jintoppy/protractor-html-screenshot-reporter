@@ -106,7 +106,9 @@ Default is `false`.
 
 ## HTML Reporter
 
-On running the task via grunt, screenshot reporter will be generating json and png files for each test. 
+On running the task via grunt, screenshot reporter will be generating json and png files for each test.
+
+Now, you will also get a summary report, Stack trace information also. 
 
 With this postprocessing, you will get a json which has all the metadata, and also an html page showing the results. 
 

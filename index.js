@@ -1,5 +1,6 @@
 var util = require('./lib/util')
 	, mkdirp = require('mkdirp')
+	, _ = require('underscore')
 	, path = require('path');
 
 /** Function: defaultPathBuilder
@@ -52,8 +53,16 @@ function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 
 	if(results.items_.length > 0) {
 		var result = results.items_[0];
-		metaData.message = result.message;
-		metaData.trace = result.trace.stack;
+		if(!results.passed()){
+			var failedItem = _.where(results.items_,{passed: false})[0];
+			metaData.message = failedItem || 'Failed';
+			metaData.trace = failedItem.trace.stack;
+
+		}else{
+			metaData.message = result.message || 'Passed';
+			metaData.trace = result.trace.stack;
+		}
+		
 	}
 
 	return metaData;
