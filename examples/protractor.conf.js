@@ -62,26 +62,6 @@ exports.config = {
       jasmine.getEnv().addReporter(new HtmlReporter({
          baseDirectory: 'screenshots',
          takeScreenShotsOnlyForFailedSpecs: true,
-         metaDataBuilder: function(spec, descriptions, results, capabilities){
-            var metaData = {
-                description: descriptions.join('|')
-                , passed: results.passed()
-                , os: capabilities.caps_.platform
-                , browser: {
-                  name: capabilities.caps_.browserName
-                  , version: capabilities.caps_.version
-                }
-              };
-
-            if(results.items_.length > 0) {
-              var result = results.items_[0];
-              metaData.message = result.message;
-              metaData.trace = result.trace.stack;
-            }
-
-            return metaData;
-
-         },
          pathBuilder: function pathBuilder(spec, descriptions, results, capabilities) {
           
             var monthMap = {
