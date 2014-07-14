@@ -50,7 +50,6 @@ function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 				, version: capabilities.caps_.version
 			}
 		};
-	console.dir(results.items_);
 	if(results.items_.length > 0) {
 		var result = results.items_[0];
 		if(!results.passed()){
