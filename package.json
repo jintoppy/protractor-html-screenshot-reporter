@@ -1,6 +1,6 @@
 {
   "name": "protractor-html-screenshot-reporter",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "An npm module and grunt plugin which generates your Protractor test reports in HTML with screenshots",
   "main": "index.js",
   "repository": {
