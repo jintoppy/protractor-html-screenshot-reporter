@@ -102,6 +102,7 @@ function ScreenshotReporter(options) {
 	}
 
 	this.pathBuilder = options.pathBuilder || defaultPathBuilder;
+	this.docTitle = options.docTitle || 'Generated test report';
 	this.metaDataBuilder = options.metaDataBuilder || defaultMetaDataBuilder;
 	this.takeScreenShotsForSkippedSpecs =
 		options.takeScreenShotsForSkippedSpecs || false;
@@ -112,7 +113,8 @@ function ScreenshotReporter(options) {
  		takeScreenShotsForSkippedSpecs: this.takeScreenShotsForSkippedSpecs,
  		metaDataBuilder: this.metaDataBuilder,
  		pathBuilder: this.pathBuilder,
- 		baseDirectory: this.baseDirectory	
+ 		baseDirectory: this.baseDirectory,
+ 		docTitle: this.docTitle
  	};
 }
 

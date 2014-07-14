@@ -97,12 +97,21 @@ Default is `false`.
     , takeScreenShotsOnlyForFailedSpecs: true
  });
  ```
-
  If you set the value to `true`, the reporter for the passed test will still be generated, but, there will be no screenshot.
  
  Default is `false`.
 
 
+### Add title for the html report (optional)
+ Also you can define a document title for the html report generated using the `docTitle:` option:
+ 
+ ```javascript
+ new HtmlReporter({
+    baseDirectory: '/tmp/screenshots'
+    , docTitle: 'my reporter'
+ });
+ ```
+Default is `Generated test report`.
 
 ## HTML Reporter
 
