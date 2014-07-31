@@ -116,6 +116,7 @@ function ScreenshotReporter(options) {
  		baseDirectory: this.baseDirectory,
  		docTitle: this.docTitle
  	};
+ 	util.removeDirectory(this.finalOptions.baseDirectory);
 }
 
 /** Function: reportSpecResults
@@ -166,7 +167,6 @@ function reportSpecResults(spec) {
 				, directory = path.dirname(screenShotPath);
 
 			metaData.screenShotFile = screenShotFile;
-			util.removeDirectory(directory);
 			mkdirp(directory, function(err) {
 				if(err) {
 					throw new Error('Could not create directory ' + directory);
