@@ -111,8 +111,8 @@ Default is `false`.
     , docTitle: 'my reporter'
  });
  ```
-
- ### Change html report file name (optional)
+ 
+### Change html report file name (optional)
  Also you can change document name for the html report generated using the `docName:` option:
  
  ```javascript
