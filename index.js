@@ -117,6 +117,29 @@ function ScreenshotReporter(options) {
  		docTitle: this.docTitle
  	};
  	util.removeDirectory(this.finalOptions.baseDirectory);
+
+ 	var self = this;
+
+ 	self.manualScreenShotPaths = [];
+ 	// manual screenshots
+	jasmine.Spec.prototype.takeScreenshot = function takeScreenshot() {
+		browser.takeScreenshot().then(function (png) {
+			var baseName = util.generateGuid();
+			var screenShotFile = baseName + '.png';
+			var screenShotPath = path.join(self.baseDirectory, screenShotFile);
+			var directory = path.dirname(screenShotPath);
+
+			self.manualScreenShotPaths.push(screenShotPath);
+
+			mkdirp(directory, function(err) {
+				if(err) {
+					throw new Error('Could not create directory ' + directory);
+				} else {
+					util.storeScreenShot(png, screenShotPath);
+				}
+			});
+		});
+	};
 }
 
 /** Function: reportSpecResults
@@ -171,8 +194,17 @@ function reportSpecResults(spec) {
 				if(err) {
 					throw new Error('Could not create directory ' + directory);
 				} else {
+					metaData.manualScreenShotFiles = [];
+					var manualScreenShotCounter = 0;
+					self.manualScreenShotPaths.forEach(function(manualScreenShotFile) {
+						var newFilePath = screenShotPath.slice(0, screenShotPath.length-4) + '-' + ++manualScreenShotCounter + '.png';
+						util.renameAndMoveTempScreenShot(manualScreenShotFile, newFilePath);
+						metaData.manualScreenShotFiles.push(newFilePath);
+					});
+					self.manualScreenShotPaths = [];
 					util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
 					if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passed())) {
+						screenShotPath = screenShotPath.slice(0, screenShotPath.length-4) + '-' + ++manualScreenShotCounter + '.png';
 						util.storeScreenShot(png, screenShotPath);
 					}	
 					util.storeMetaData(metaData, metaDataPath);
