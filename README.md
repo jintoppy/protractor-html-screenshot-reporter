@@ -111,6 +111,17 @@ Default is `false`.
     , docTitle: 'my reporter'
  });
  ```
+ 
+### Change html report file name (optional)
+ Also you can change document name for the html report generated using the `docName:` option:
+ 
+ ```javascript
+ new HtmlReporter({
+    baseDirectory: '/tmp/screenshots'
+    , docName: 'index.html'
+ });
+ ```
+
 Default is `Generated test report`.
 
 ## HTML Reporter
