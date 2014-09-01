@@ -111,7 +111,9 @@ Default is `false`.
     , docTitle: 'my reporter'
  });
  ```
- 
+
+Default is `Generated test report`.
+
 ### Change html report file name (optional)
  Also you can change document name for the html report generated using the `docName:` option:
  
@@ -121,8 +123,7 @@ Default is `false`.
     , docName: 'index.html'
  });
  ```
-
-Default is `Generated test report`.
+Default is `report.html`.
 
 ## HTML Reporter
 
