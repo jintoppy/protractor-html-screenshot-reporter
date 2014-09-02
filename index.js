@@ -200,14 +200,15 @@ function reportSpecResults(spec) {
 					self.manualScreenShotPaths.forEach(function(manualScreenShotFile) {
 						var newFilePath = screenShotPath.slice(0, screenShotPath.length-4) + '-' + ++manualScreenShotCounter + '.png';
 						util.renameAndMoveTempScreenShot(manualScreenShotFile, newFilePath);
-						metaData.manualScreenShotFiles.push(newFilePath);
+						metaData.manualScreenShotFiles.push(path.basename(newFilePath));
 					});
-					self.manualScreenShotPaths = [];
-					util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
 					if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passed())) {
 						screenShotPath = screenShotPath.slice(0, screenShotPath.length-4) + '-' + ++manualScreenShotCounter + '.png';
 						util.storeScreenShot(png, screenShotPath);
 					}	
+                    metaData.screenShotFile = path.basename(screenShotPath);
+                    util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
+                    self.manualScreenShotPaths = [];
 					util.storeMetaData(metaData, metaDataPath);
 				}
 			});
