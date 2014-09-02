@@ -116,7 +116,8 @@ function ScreenshotReporter(options) {
  		baseDirectory: this.baseDirectory,
  		docTitle: this.docTitle
  	};
- 	util.removeDirectory(this.finalOptions.baseDirectory);
+	if(options.removeDirectory)
+ 		util.removeDirectory(this.finalOptions.baseDirectory);
 
  	var self = this;
 
