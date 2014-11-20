@@ -105,6 +105,7 @@ function ScreenshotReporter(options) {
 	this.docTitle = options.docTitle || 'Generated test report';
 	this.docName = options.docName || 'report.html';
 	this.metaDataBuilder = options.metaDataBuilder || defaultMetaDataBuilder;
+	this.preserveDirectory = options.preserveDirectory || false;
 	this.takeScreenShotsForSkippedSpecs =
 		options.takeScreenShotsForSkippedSpecs || false;
 		this.takeScreenShotsOnlyForFailedSpecs =
@@ -118,7 +119,10 @@ function ScreenshotReporter(options) {
  		docTitle: this.docTitle,
  		docName: this.docName
  	};
- 	util.removeDirectory(this.finalOptions.baseDirectory);
+
+ 	if(!this.preserveDirectory){
+ 		util.removeDirectory(this.finalOptions.baseDirectory);
+ 	}
 }
 
 /** Function: reportSpecResults
