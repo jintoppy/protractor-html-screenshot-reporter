@@ -122,7 +122,7 @@ function ScreenshotReporter(options) {
 }
 
 /** Function: reportSpecResults
- * Called by Jasmine when reporteing results for a test spec. It triggers the
+ * Called by Jasmine when reporting results for a test spec. It triggers the
  * whole screenshot capture process and stores any relevant information.
  *
  * Parameters:
