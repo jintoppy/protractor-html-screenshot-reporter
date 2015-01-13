@@ -135,7 +135,7 @@ Default is `report.html`.
  });
  ```
 
-  ### Preserve base directory (optional)
+### Preserve base directory (optional)
  You can preserve the base directory using `preserveDirectory:` option:
  
  ```javascript
