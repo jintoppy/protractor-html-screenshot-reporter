@@ -135,6 +135,17 @@ Default is `report.html`.
  });
  ```
 
+  ### Preserve base directory (optional)
+ You can preserve the base directory using `preserveDirectory:` option:
+ 
+ ```javascript
+ new HtmlReporter({
+    baseDirectory: '/tmp/screenshots'
+    , preserveDirectory: true
+ });
+ ```
+Default is `false`.
+
 ## HTML Reporter
 
 On running the task via grunt, screenshot reporter will be generating json and png files for each test.
