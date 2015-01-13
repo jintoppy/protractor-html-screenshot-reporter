@@ -101,6 +101,12 @@ function ScreenshotReporter(options) {
 		this.baseDirectory = options.baseDirectory;
 	}
 
+	if(typeof (options.cssOverrideFile) !== 'undefined' && _.isString(options.cssOverrideFile) ){
+		this.cssOverrideFile = options.cssOverrideFile;
+	} else {
+		this.cssOverrideFile = null;
+	}
+
 	this.pathBuilder = options.pathBuilder || defaultPathBuilder;
 	this.docTitle = options.docTitle || 'Generated test report';
 	this.docName = options.docName || 'report.html';
@@ -117,7 +123,8 @@ function ScreenshotReporter(options) {
  		pathBuilder: this.pathBuilder,
  		baseDirectory: this.baseDirectory,
  		docTitle: this.docTitle,
- 		docName: this.docName
+ 		docName: this.docName,
+ 		cssOverrideFile: this.cssOverrideFile
  	};
 
  	if(!this.preserveDirectory){
