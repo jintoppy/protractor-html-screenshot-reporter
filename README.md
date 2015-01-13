@@ -125,6 +125,16 @@ Default is `Generated test report`.
  ```
 Default is `report.html`.
 
+### Option to override CSS file used in reporter (optional)
+ You can change stylesheet used for the html report generated using the `cssOverrideFile:` option:
+ 
+ ```javascript
+ new HtmlReporter({
+    baseDirectory: '/tmp/screenshots'
+    , cssOverrideFile: 'css/style.css'
+ });
+ ```
+
 ## HTML Reporter
 
 On running the task via grunt, screenshot reporter will be generating json and png files for each test.
