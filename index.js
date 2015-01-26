@@ -64,7 +64,7 @@ function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 
 			//report all failures
 			metaData.message = messages.length && messages.join('\n') || 'Failed';
-			metaData.trace = stacks.length && stacks.join('\n') : 'No Stack trace information';
+			metaData.trace = stacks.length && stacks.join('\n') || 'No Stack trace information';
 
 		} else {
 			metaData.message = result && result.message || 'Passed';
