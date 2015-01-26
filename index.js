@@ -41,30 +41,38 @@ function defaultPathBuilder(spec, descriptions, results, capabilities) {
  *     (Object) containig meta data to store along with a screenshot
  */
 function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
+	var passed = spec.passedExpectations
+		, failed = spec.failedExpectations;
+
 	var metaData = {
 			description: descriptions.join(' ')
-			, passed: results.passed()
+			, passed: _.every(passed.concat(failed), function(it){return it.passed})
 			, os: capabilities.caps_.platform
 			, browser: {
 				name: capabilities.caps_.browserName
 				, version: capabilities.caps_.version
 			}
 		};
-	if(results.items_.length > 0) {
-		var result = results.items_[0];
-		if(!results.passed()){
-			var failedItem = _.where(results.items_,{passed_: false})[0];
-			if(failedItem){
-				metaData.message = failedItem.message || 'Failed';
-				metaData.trace = failedItem.trace? (failedItem.trace.stack || 'No Stack trace information') : 'No Stack trace information';	
-			}
 
-		}else{
-			metaData.message = result.message || 'Passed';
-			metaData.trace = result.trace.stack;
+	console.log(passed,failed)
+	if(passed.length > 0 || failed.length > 0) {
+		var result = passed[0];
+
+		if(failed.length > 0) {
+			var messages = _.pluck(failed, 'message'),
+			      stacks = _.pluck(failed, 'stack').join('\n'),
+
+			//report all failures
+			metaData.message = messages.length && messages.join('\n') || 'Failed';
+			metaData.trace = stacks.length && stacks.join('\n') : 'No Stack trace information';
+
+		} else {
+			metaData.message = result && result.message || 'Passed';
+			metaData.trace = result && result.stack;
 		}
-		
 	}
+
+	console.log(metaData)
 
 	return metaData;
 }
@@ -132,68 +140,88 @@ function ScreenshotReporter(options) {
  	}
 }
 
-/** Function: reportSpecResults
- * Called by Jasmine when reporting results for a test spec. It triggers the
- * whole screenshot capture process and stores any relevant information.
- *
- * Parameters:
- *     (Object) spec - The test spec to report.
- */
-ScreenshotReporter.prototype.reportSpecResults =
-function reportSpecResults(spec) {
-	/* global browser */
-	var self = this
-		, results = spec.results()
+var currentSuite, currentSpec;
+ScreenshotReporter.prototype.jasmineStarted = function () {
+    //console.log("##test[progressStart 'Running Jasmine Tests']");
+};
 
-	if(!self.takeScreenShotsForSkippedSpecs && results.skipped) {
-		return;
-	}
+ScreenshotReporter.prototype.jasmineDone = function () {
+    //console.log("##test[progressFinish 'Running Jasmine Tests']");
+};
 
-	browser.takeScreenshot().then(function (png) {
-		browser.getCapabilities().then(function (capabilities) {
-			var descriptions = util.gatherDescriptions(
-					spec.suite
-					, [spec.description]
-				)
+ScreenshotReporter.prototype.suiteStarted = function (suite) {
+	currentSuite = suite;
+    //console.log("##START[testSuiteStarted name='" + (suite.fullName) + "']");
+};
 
+ScreenshotReporter.prototype.suiteDone = function (suite) {
+    //console.log("##test[testSuiteFinished name='" + (suite.fullName) + "']");
+};
 
-				, baseName = self.pathBuilder(
-					spec
-					, descriptions
-					, results
-					, capabilities
-				)
-				, metaData = self.metaDataBuilder(
-					spec
-					, descriptions
-					, results
-					, capabilities
-				)
+ScreenshotReporter.prototype.specStarted = function (spec) {
+	currentSpec = spec;
+    //console.log("##START[testStarted name='" + (spec.description) + "' captureStandardOutput='true']");
+};
 
-				, screenShotFile = baseName + '.png'
-				, metaFile = baseName + '.json'
-				, screenShotPath = path.join(self.baseDirectory, screenShotFile)
-				, metaDataPath = path.join(self.baseDirectory, metaFile)
+ScreenshotReporter.prototype.specDone = function (spec) {
+    //console.log("##test[testFinished name='" + (spec.description) + "']");
 
-				// pathBuilder can return a subfoldered path too. So extract the
-				// directory path without the baseName
-				, directory = path.dirname(screenShotPath);
+    /** Function: specDone
+     * Called by Jasmine when a test spec is done. It triggers the
+     * whole screenshot capture process and stores any relevant information.
+     *
+     * Parameters:
+     *     (Object) spec - The test spec to report.
+     */
 
-			metaData.screenShotFile = screenShotFile;
-			mkdirp(directory, function(err) {
-				if(err) {
-					throw new Error('Could not create directory ' + directory);
-				} else {
-					util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
-					if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passed())) {
-						util.storeScreenShot(png, screenShotPath);
-					}	
-					util.storeMetaData(metaData, metaDataPath);
-				}
-			});
-		});
-	});
+    var self = this, results = spec;
+    if(!self.takeScreenShotsForSkippedSpecs && results.skipped) {
+    	return;
+    }
 
+    browser.takeScreenshot().then(function (png) {
+    	browser.getCapabilities().then(function (capabilities) {
+    		var descriptions = util.gatherDescriptions(
+    				currentSuite
+    				, [spec.description]
+    			)
+
+    			, baseName = self.pathBuilder(
+    				spec
+    				, descriptions
+    				, results
+    				, capabilities
+    			)
+    			, metaData = self.metaDataBuilder(
+    				spec
+    				, descriptions
+    				, results
+    				, capabilities
+    			)
+
+    			, screenShotFile = baseName + '.png'
+    			, metaFile = baseName + '.json'
+    			, screenShotPath = path.join(self.baseDirectory, screenShotFile)
+    			, metaDataPath = path.join(self.baseDirectory, metaFile)
+
+    			// pathBuilder can return a subfoldered path too. So extract the
+    			// directory path without the baseName
+    			, directory = path.dirname(screenShotPath);
+
+    		metaData.screenShotFile = screenShotFile;
+    		mkdirp(directory, function(err) {
+    			if(err) {
+    				throw new Error('Could not create directory ' + directory);
+    			} else {
+    				util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
+    				if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passedExpectations)) {
+    					util.storeScreenShot(png, screenShotPath);
+    				}
+    				util.storeMetaData(metaData, metaDataPath);
+    			}
+    		});
+    	});
+    });
 };
 
 module.exports = ScreenshotReporter;
