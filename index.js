@@ -59,7 +59,7 @@ function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 
 		if(failed.length > 0) {
 			var messages = _.pluck(failed, 'message'),
-			      stacks = _.pluck(failed, 'stack').join('\n');
+			      stacks = _.pluck(failed, 'stack');
 
 			//report all failures
 			metaData.message = messages.length && messages.join('\n') || 'Failed';
