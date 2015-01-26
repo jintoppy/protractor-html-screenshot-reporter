@@ -54,7 +54,6 @@ function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 			}
 		};
 
-	console.log(passed,failed)
 	if(passed.length > 0 || failed.length > 0) {
 		var result = passed[0];
 
@@ -71,8 +70,6 @@ function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 			metaData.trace = result && result.stack;
 		}
 	}
-
-	console.log(metaData)
 
 	return metaData;
 }
