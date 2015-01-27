@@ -109,6 +109,7 @@ function ScreenshotReporter(options) {
 
 	this.pathBuilder = options.pathBuilder || defaultPathBuilder;
 	this.docTitle = options.docTitle || 'Generated test report';
+	this.docHeader = options.docHeader || 'Test Results';
 	this.docName = options.docName || 'report.html';
 	this.metaDataBuilder = options.metaDataBuilder || defaultMetaDataBuilder;
 	this.preserveDirectory = options.preserveDirectory || false;
@@ -123,6 +124,7 @@ function ScreenshotReporter(options) {
  		pathBuilder: this.pathBuilder,
  		baseDirectory: this.baseDirectory,
  		docTitle: this.docTitle,
+ 		docHeader: this.docHeader,
  		docName: this.docName,
  		cssOverrideFile: this.cssOverrideFile
  	};
@@ -130,6 +132,10 @@ function ScreenshotReporter(options) {
  	if(!this.preserveDirectory){
  		util.removeDirectory(this.finalOptions.baseDirectory);
  	}
+
+	//remove combined.json if it exists, so many reports can be created in the same html file
+ 	var combinedFile = path.join(this.finalOptions.baseDirectory,'combined.json');
+	util.removeFile(combinedFile);
 }
 
 /** Function: reportSpecResults
