@@ -144,12 +144,17 @@ function reportSpecResults(spec) {
 	/* global browser */
 	var self = this
 		, results = spec.results()
+		, takeScreenshot
+		, finishReport;
 
 	if(!self.takeScreenShotsForSkippedSpecs && results.skipped) {
 		return;
 	}
 
-	browser.takeScreenshot().then(function (png) {
+	takeScreenshot = !(self.takeScreenShotsOnlyForFailedSpecs && results.passed());
+
+	finishReport = function(png) {
+
 		browser.getCapabilities().then(function (capabilities) {
 			var descriptions = util.gatherDescriptions(
 					spec.suite
@@ -185,14 +190,28 @@ function reportSpecResults(spec) {
 					throw new Error('Could not create directory ' + directory);
 				} else {
 					util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
-					if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passed())) {
+					if(takeScreenshot) {
 						util.storeScreenShot(png, screenShotPath);
 					}	
 					util.storeMetaData(metaData, metaDataPath);
 				}
 			});
 		});
-	});
+
+	};
+
+	if (takeScreenshot) {
+
+		browser.takeScreenshot().then(function (png) {
+			finishReport(png);
+		});
+
+	} else {
+
+		finishReport();
+
+	}
+
 
 };
 
