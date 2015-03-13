@@ -211,7 +211,8 @@ ScreenshotReporter.prototype.specDone = function (spec) {
     				throw new Error('Could not create directory ' + directory);
     			} else {
     				util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
-    				if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passedExpectations)) {
+
+    				if(!(self.takeScreenShotsOnlyForFailedSpecs && results.status === 'passed')) {
     					util.storeScreenShot(png, screenShotPath);
     				}
     				util.storeMetaData(metaData, metaDataPath);
