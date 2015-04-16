@@ -123,10 +123,11 @@ function ScreenshotReporter(options) {
 
  	self.manualScreenShotPaths = [];
  	// manual screenshots
-	jasmine.Spec.prototype.takeScreenshot = function takeScreenshot() {
+	jasmine.Spec.prototype.takeScreenshot = function takeScreenshot(desc) {
 		browser.takeScreenshot().then(function (png) {
+			var description = desc.split(' ').join('_');
 			var baseName = util.generateGuid();
-			var screenShotFile = baseName + '.png';
+			var screenShotFile = description + '__' + baseName + '.png';
 			var screenShotPath = path.join(self.baseDirectory, screenShotFile);
 			var directory = path.dirname(screenShotPath);
 
