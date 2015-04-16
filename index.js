@@ -56,14 +56,14 @@ function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 			var failedItem = _.where(results.items_,{passed_: false})[0];
 			if(failedItem){
 				metaData.message = failedItem.message || 'Failed';
-				metaData.trace = failedItem.trace? (failedItem.trace.stack || 'No Stack trace information') : 'No Stack trace information';	
+				metaData.trace = failedItem.trace? (failedItem.trace.stack || 'No Stack trace information') : 'No Stack trace information';
 			}
 
 		}else{
 			metaData.message = result.message || 'Passed';
 			metaData.trace = result.trace.stack;
 		}
-		
+
 	}
 
 	return metaData;
@@ -129,7 +129,10 @@ function ScreenshotReporter(options) {
 			var baseName = util.generateGuid();
 			var screenShotFile = description + '__' + baseName + '.png';
 			var screenShotPath = path.join(self.baseDirectory, screenShotFile);
-			var directory = path.dirname(screenShotPath);
+
+            console.log("taking screenshot: " + screenShotPath);
+
+            var directory = path.dirname(screenShotPath);
 
 			self.manualScreenShotPaths.push(screenShotPath);
 
@@ -197,16 +200,22 @@ function reportSpecResults(spec) {
 					throw new Error('Could not create directory ' + directory);
 				} else {
 					metaData.manualScreenShotFiles = [];
+					metaData.manualScreenShotNameMap = {};
 					var manualScreenShotCounter = 0;
 					self.manualScreenShotPaths.forEach(function(manualScreenShotFile) {
-						var newFilePath = screenShotPath.slice(0, screenShotPath.length-4) + '-' + ++manualScreenShotCounter + '.png';
-						util.renameAndMoveTempScreenShot(manualScreenShotFile, newFilePath);
+
+                        var newFilePath = screenShotPath.slice(0, screenShotPath.length-4) + '-' + ++manualScreenShotCounter + '.png';
+                        var pathParts = manualScreenShotFile.split("\\");
+                        var _filename = pathParts[pathParts.length - 1];
+                        var description = _filename.slice(0, _filename.length - 42).split('_').join(' ');
+                        util.renameAndMoveTempScreenShot(manualScreenShotFile, newFilePath);
 						metaData.manualScreenShotFiles.push(path.basename(newFilePath));
+                        metaData.manualScreenShotNameMap[path.basename(newFilePath)] = description;
 					});
 					if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passed())) {
 						screenShotPath = screenShotPath.slice(0, screenShotPath.length-4) + '-' + ++manualScreenShotCounter + '.png';
 						util.storeScreenShot(png, screenShotPath);
-					}	
+					}
                     metaData.screenShotFile = path.basename(screenShotPath);
                     util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
                     self.manualScreenShotPaths = [];
