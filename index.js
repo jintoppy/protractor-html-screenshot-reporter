@@ -56,14 +56,14 @@ function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 			var failedItem = _.where(results.items_,{passed_: false})[0];
 			if(failedItem){
 				metaData.message = failedItem.message || 'Failed';
-				metaData.trace = failedItem.trace? (failedItem.trace.stack || 'No Stack trace information') : 'No Stack trace information';	
+				metaData.trace = failedItem.trace? (failedItem.trace.stack || 'No Stack trace information') : 'No Stack trace information';
 			}
 
 		}else{
 			metaData.message = result.message || 'Passed';
 			metaData.trace = result.trace.stack;
 		}
-		
+
 	}
 
 	return metaData;
@@ -108,7 +108,10 @@ function ScreenshotReporter(options) {
 	}
 
 	this.pathBuilder = options.pathBuilder || defaultPathBuilder;
+	this.disableMetaData = options.disableMetaData || false;
+	this.combinedJsonFileName = options.combinedJsonFileName || 'combined.json';
 	this.docTitle = options.docTitle || 'Generated test report';
+	this.docHeader = options.docHeader || 'Test Results';
 	this.docName = options.docName || 'report.html';
 	this.metaDataBuilder = options.metaDataBuilder || defaultMetaDataBuilder;
 	this.preserveDirectory = options.preserveDirectory || false;
@@ -121,8 +124,11 @@ function ScreenshotReporter(options) {
  		takeScreenShotsForSkippedSpecs: this.takeScreenShotsForSkippedSpecs,
  		metaDataBuilder: this.metaDataBuilder,
  		pathBuilder: this.pathBuilder,
+ 		disableMetaData: this.disableMetaData,
+ 		combinedJsonFileName: this.combinedJsonFileName,
  		baseDirectory: this.baseDirectory,
  		docTitle: this.docTitle,
+ 		docHeader: this.docHeader,
  		docName: this.docName,
  		cssOverrideFile: this.cssOverrideFile
  	};
@@ -192,8 +198,10 @@ function reportSpecResults(spec) {
 					util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
 					if(takeScreenshot) {
 						util.storeScreenShot(png, screenShotPath);
-					}	
-					util.storeMetaData(metaData, metaDataPath);
+					}
+					if (!self.finalOptions.disableMetaData) {
+						util.storeMetaData(metaData, metaDataPath);
+					}
 				}
 			});
 		});
