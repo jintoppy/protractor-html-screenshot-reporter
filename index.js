@@ -42,14 +42,23 @@ function defaultPathBuilder(spec, descriptions, results, capabilities) {
  */
 function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 	var metaData = {
-			description: descriptions.join(' ')
-			, passed: results.passed()
-			, os: capabilities.caps_.platform
-			, browser: {
-				name: capabilities.caps_.browserName
-				, version: capabilities.caps_.version
-			}
-		};
+		description: descriptions.join(' ')
+		, passed: results.passed()
+		, os: capabilities.caps_.platform
+		, sessionId: capabilities.caps_['webdriver.remote.sessionid']
+		, browser: {
+			name: capabilities.caps_.browserName
+			, version: capabilities.caps_.version
+		}
+	};
+	//console.log(capabilities.caps_);
+	//console.log('XXXXXXXXXXXXXXXXXXXX Results are next XXXXXXXXXXXXXXXXXXXX');
+	//console.log(results);
+	//console.log('XXXXXXXXXXXXXXXXXXXX Description are next XXXXXXXXXXXXXXXXXXXX');
+	//console.log(descriptions);
+	//console.log('XXXXXXXXXXXXXXXXXXXX Spec are next XXXXXXXXXXXXXXXXXXXX');
+	//console.log(spec);
+
 	if(results.items_.length > 0) {
 		var result = results.items_[0];
 		if(!results.passed()){
@@ -108,34 +117,28 @@ function ScreenshotReporter(options) {
 	}
 
 	this.pathBuilder = options.pathBuilder || defaultPathBuilder;
-	this.disableMetaData = options.disableMetaData || false;
-	this.combinedJsonFileName = options.combinedJsonFileName || 'combined.json';
 	this.docTitle = options.docTitle || 'Generated test report';
-	this.docHeader = options.docHeader || 'Test Results';
 	this.docName = options.docName || 'report.html';
 	this.metaDataBuilder = options.metaDataBuilder || defaultMetaDataBuilder;
 	this.preserveDirectory = options.preserveDirectory || false;
 	this.takeScreenShotsForSkippedSpecs =
 		options.takeScreenShotsForSkippedSpecs || false;
-		this.takeScreenShotsOnlyForFailedSpecs =
- 		options.takeScreenShotsOnlyForFailedSpecs || false;
- 	this.finalOptions = {
- 		takeScreenShotsOnlyForFailedSpecs: this.takeScreenShotsOnlyForFailedSpecs,
- 		takeScreenShotsForSkippedSpecs: this.takeScreenShotsForSkippedSpecs,
- 		metaDataBuilder: this.metaDataBuilder,
- 		pathBuilder: this.pathBuilder,
- 		disableMetaData: this.disableMetaData,
- 		combinedJsonFileName: this.combinedJsonFileName,
- 		baseDirectory: this.baseDirectory,
- 		docTitle: this.docTitle,
- 		docHeader: this.docHeader,
- 		docName: this.docName,
- 		cssOverrideFile: this.cssOverrideFile
- 	};
+	this.takeScreenShotsOnlyForFailedSpecs =
+		options.takeScreenShotsOnlyForFailedSpecs || false;
+	this.finalOptions = {
+		takeScreenShotsOnlyForFailedSpecs: this.takeScreenShotsOnlyForFailedSpecs,
+		takeScreenShotsForSkippedSpecs: this.takeScreenShotsForSkippedSpecs,
+		metaDataBuilder: this.metaDataBuilder,
+		pathBuilder: this.pathBuilder,
+		baseDirectory: this.baseDirectory,
+		docTitle: this.docTitle,
+		docName: this.docName,
+		cssOverrideFile: this.cssOverrideFile
+	};
 
- 	if(!this.preserveDirectory){
- 		util.removeDirectory(this.finalOptions.baseDirectory);
- 	}
+	if(!this.preserveDirectory){
+		util.removeDirectory(this.finalOptions.baseDirectory);
+	}
 }
 
 /** Function: reportSpecResults
@@ -146,81 +149,59 @@ function ScreenshotReporter(options) {
  *     (Object) spec - The test spec to report.
  */
 ScreenshotReporter.prototype.reportSpecResults =
-function reportSpecResults(spec) {
-	/* global browser */
-	var self = this
-		, results = spec.results()
-		, takeScreenshot
-		, finishReport;
+	function reportSpecResults(spec) {
+		/* global browser */
+		var self = this
+			, results = spec.results()
 
-	if(!self.takeScreenShotsForSkippedSpecs && results.skipped) {
-		return;
-	}
+		if(!self.takeScreenShotsForSkippedSpecs && results.skipped) {
+			return;
+		}
 
-	takeScreenshot = !(self.takeScreenShotsOnlyForFailedSpecs && results.passed());
+		browser.takeScreenshot().then(function (png) {
+			browser.getCapabilities().then(function (capabilities) {
+				var descriptions = util.gatherDescriptions(
+						spec.suite
+						, [spec.description]
+					)
 
-	finishReport = function(png) {
+					, baseName = self.pathBuilder(
+						spec
+						, descriptions
+						, results
+						, capabilities
+					)
+					, metaData = self.metaDataBuilder(
+						spec
+						, descriptions
+						, results
+						, capabilities
+					)
 
-		browser.getCapabilities().then(function (capabilities) {
-			var descriptions = util.gatherDescriptions(
-					spec.suite
-					, [spec.description]
-				)
-
-
-				, baseName = self.pathBuilder(
-					spec
-					, descriptions
-					, results
-					, capabilities
-				)
-				, metaData = self.metaDataBuilder(
-					spec
-					, descriptions
-					, results
-					, capabilities
-				)
-
-				, screenShotFile = baseName + '.png'
-				, metaFile = baseName + '.json'
-				, screenShotPath = path.join(self.baseDirectory, screenShotFile)
-				, metaDataPath = path.join(self.baseDirectory, metaFile)
+					, screenShotFile = baseName + '.png'
+					, metaFile = baseName + '.json'
+					, screenShotPath = path.join(self.baseDirectory, screenShotFile)
+					, metaDataPath = path.join(self.baseDirectory, metaFile)
 
 				// pathBuilder can return a subfoldered path too. So extract the
 				// directory path without the baseName
-				, directory = path.dirname(screenShotPath);
+					, directory = path.dirname(screenShotPath);
 
-			metaData.screenShotFile = screenShotFile;
-			mkdirp(directory, function(err) {
-				if(err) {
-					throw new Error('Could not create directory ' + directory);
-				} else {
-					util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
-					if(takeScreenshot) {
-						util.storeScreenShot(png, screenShotPath);
-					}
-					if (!self.finalOptions.disableMetaData) {
+				metaData.screenShotFile = screenShotFile;
+				mkdirp(directory, function(err) {
+					if(err) {
+						throw new Error('Could not create directory ' + directory);
+					} else {
+						util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
+						if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passed())) {
+							util.storeScreenShot(png, screenShotPath);
+						}
 						util.storeMetaData(metaData, metaDataPath);
 					}
-				}
+				});
 			});
 		});
 
 	};
-
-	if (takeScreenshot) {
-
-		browser.takeScreenshot().then(function (png) {
-			finishReport(png);
-		});
-
-	} else {
-
-		finishReport();
-
-	}
-
-
-};
 
 module.exports = ScreenshotReporter;
