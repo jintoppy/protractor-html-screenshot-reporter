@@ -42,24 +42,17 @@ function defaultPathBuilder(spec, descriptions, results, capabilities) {
  */
 function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 	var metaData = {
-		description: descriptions.join(' ')
-		, passed: results.passed()
-		, os: capabilities.caps_.platform
-		, sessionId: capabilities.caps_['webdriver.remote.sessionid']
-		, browser: {
-			name: capabilities.caps_.browserName
-			, version: capabilities.caps_.version
-		}
-	};
-	//console.log(capabilities.caps_);
-	//console.log('XXXXXXXXXXXXXXXXXXXX Results are next XXXXXXXXXXXXXXXXXXXX');
-	//console.log(results);
-	//console.log('XXXXXXXXXXXXXXXXXXXX Description are next XXXXXXXXXXXXXXXXXXXX');
-	//console.log(descriptions);
-	//console.log('XXXXXXXXXXXXXXXXXXXX Spec are next XXXXXXXXXXXXXXXXXXXX');
-	//console.log(spec);
+			description: descriptions.join(' ')
+			, passed: results.passed()
+			, os: capabilities.caps_.platform
+			, sessionId: capabilities.caps_['webdriver.remote.sessionid']
+            , browser: {
+				name: capabilities.caps_.browserName
+				, version: capabilities.caps_.version
+			}
+		};
 
-	if(results.items_.length > 0) {
+    if(results.items_.length > 0) {
 		var result = results.items_[0];
 		if(!results.passed()){
 			var failedItem = _.where(results.items_,{passed_: false})[0];
@@ -123,22 +116,22 @@ function ScreenshotReporter(options) {
 	this.preserveDirectory = options.preserveDirectory || false;
 	this.takeScreenShotsForSkippedSpecs =
 		options.takeScreenShotsForSkippedSpecs || false;
-	this.takeScreenShotsOnlyForFailedSpecs =
-		options.takeScreenShotsOnlyForFailedSpecs || false;
-	this.finalOptions = {
-		takeScreenShotsOnlyForFailedSpecs: this.takeScreenShotsOnlyForFailedSpecs,
-		takeScreenShotsForSkippedSpecs: this.takeScreenShotsForSkippedSpecs,
-		metaDataBuilder: this.metaDataBuilder,
-		pathBuilder: this.pathBuilder,
-		baseDirectory: this.baseDirectory,
-		docTitle: this.docTitle,
-		docName: this.docName,
-		cssOverrideFile: this.cssOverrideFile
-	};
+		this.takeScreenShotsOnlyForFailedSpecs =
+ 		options.takeScreenShotsOnlyForFailedSpecs || false;
+ 	this.finalOptions = {
+ 		takeScreenShotsOnlyForFailedSpecs: this.takeScreenShotsOnlyForFailedSpecs,
+ 		takeScreenShotsForSkippedSpecs: this.takeScreenShotsForSkippedSpecs,
+ 		metaDataBuilder: this.metaDataBuilder,
+ 		pathBuilder: this.pathBuilder,
+ 		baseDirectory: this.baseDirectory,
+ 		docTitle: this.docTitle,
+ 		docName: this.docName,
+ 		cssOverrideFile: this.cssOverrideFile
+ 	};
 
-	if(!this.preserveDirectory){
-		util.removeDirectory(this.finalOptions.baseDirectory);
-	}
+ 	if(!this.preserveDirectory){
+ 		util.removeDirectory(this.finalOptions.baseDirectory);
+ 	}
 }
 
 /** Function: reportSpecResults
@@ -149,59 +142,59 @@ function ScreenshotReporter(options) {
  *     (Object) spec - The test spec to report.
  */
 ScreenshotReporter.prototype.reportSpecResults =
-	function reportSpecResults(spec) {
-		/* global browser */
-		var self = this
-			, results = spec.results()
+function reportSpecResults(spec) {
+	/* global browser */
+	var self = this
+		, results = spec.results()
 
-		if(!self.takeScreenShotsForSkippedSpecs && results.skipped) {
-			return;
-		}
+	if(!self.takeScreenShotsForSkippedSpecs && results.skipped) {
+		return;
+	}
 
-		browser.takeScreenshot().then(function (png) {
-			browser.getCapabilities().then(function (capabilities) {
-				var descriptions = util.gatherDescriptions(
-						spec.suite
-						, [spec.description]
-					)
+	browser.takeScreenshot().then(function (png) {
+		browser.getCapabilities().then(function (capabilities) {
+			var descriptions = util.gatherDescriptions(
+					spec.suite
+					, [spec.description]
+				)
 
-					, baseName = self.pathBuilder(
-						spec
-						, descriptions
-						, results
-						, capabilities
-					)
-					, metaData = self.metaDataBuilder(
-						spec
-						, descriptions
-						, results
-						, capabilities
-					)
+				, baseName = self.pathBuilder(
+					spec
+					, descriptions
+					, results
+					, capabilities
+				)
+				, metaData = self.metaDataBuilder(
+					spec
+					, descriptions
+					, results
+					, capabilities
+				)
 
-					, screenShotFile = baseName + '.png'
-					, metaFile = baseName + '.json'
-					, screenShotPath = path.join(self.baseDirectory, screenShotFile)
-					, metaDataPath = path.join(self.baseDirectory, metaFile)
+				, screenShotFile = baseName + '.png'
+				, metaFile = baseName + '.json'
+				, screenShotPath = path.join(self.baseDirectory, screenShotFile)
+				, metaDataPath = path.join(self.baseDirectory, metaFile)
 
 				// pathBuilder can return a subfoldered path too. So extract the
 				// directory path without the baseName
-					, directory = path.dirname(screenShotPath);
+				, directory = path.dirname(screenShotPath);
 
-				metaData.screenShotFile = screenShotFile;
-				mkdirp(directory, function(err) {
-					if(err) {
-						throw new Error('Could not create directory ' + directory);
-					} else {
-						util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
-						if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passed())) {
-							util.storeScreenShot(png, screenShotPath);
-						}
-						util.storeMetaData(metaData, metaDataPath);
+			metaData.screenShotFile = screenShotFile;
+			mkdirp(directory, function(err) {
+				if(err) {
+					throw new Error('Could not create directory ' + directory);
+				} else {
+					util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
+					if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passed())) {
+						util.storeScreenShot(png, screenShotPath);
 					}
-				});
+					util.storeMetaData(metaData, metaDataPath);
+				}
 			});
 		});
+	});
 
-	};
+};
 
 module.exports = ScreenshotReporter;
