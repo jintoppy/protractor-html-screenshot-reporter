@@ -1,6 +1,7 @@
 {
-  "name": "protractor-html-screenshot-reporter",
+  "name": "dude/protractor-html-screenshot-reporter",
   "version": "0.0.21",
+  "private": true,
   "description": "An npm module and grunt plugin which generates your Protractor test reports in HTML with screenshots",
   "main": "index.js",
   "repository": {
@@ -8,6 +9,7 @@
     "url": "https://github.com/jintoppy/protractor-html-screenshot-reporter"
   },
   "dependencies": {
+    "private-repo": "https://github.com/DudeSolutions/protractor-html-screenshot-reporter",
     "mkdirp": "~0.3.5",
     "underscore": "~1.6.0"
   },
