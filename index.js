@@ -53,6 +53,14 @@ function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 				, version: capabilities.caps_.version
 			}
 		};
+	if(results.items_.length > 0) {
+		var result = results.items_[0];
+		if(!results.passed()){
+			var failedItem = _.where(results.items_,{passed_: false})[0];
+			if(failedItem){
+				metaData.message = failedItem.message || 'Failed';
+				metaData.trace = failedItem.trace? (failedItem.trace.stack || 'No Stack trace information') : 'No Stack trace information';
+			}
 
 	if(passed.length > 0 || failed.length > 0) {
 		var result = passed[0];
@@ -113,7 +121,10 @@ function ScreenshotReporter(options) {
 	}
 
 	this.pathBuilder = options.pathBuilder || defaultPathBuilder;
+	this.disableMetaData = options.disableMetaData || false;
+	this.combinedJsonFileName = options.combinedJsonFileName || 'combined.json';
 	this.docTitle = options.docTitle || 'Generated test report';
+	this.docHeader = options.docHeader || 'Test Results';
 	this.docName = options.docName || 'report.html';
 	this.metaDataBuilder = options.metaDataBuilder || defaultMetaDataBuilder;
 	this.preserveDirectory = options.preserveDirectory || false;
@@ -126,8 +137,11 @@ function ScreenshotReporter(options) {
  		takeScreenShotsForSkippedSpecs: this.takeScreenShotsForSkippedSpecs,
  		metaDataBuilder: this.metaDataBuilder,
  		pathBuilder: this.pathBuilder,
+ 		disableMetaData: this.disableMetaData,
+ 		combinedJsonFileName: this.combinedJsonFileName,
  		baseDirectory: this.baseDirectory,
  		docTitle: this.docTitle,
+ 		docHeader: this.docHeader,
  		docName: this.docName,
  		cssOverrideFile: this.cssOverrideFile
  	};
@@ -159,6 +173,88 @@ ScreenshotReporter.prototype.specStarted = function (spec) {
 	currentSpec = spec;
     //console.log("##START[testStarted name='" + (spec.description) + "' captureStandardOutput='true']");
 };
+
+/** Function: reportSpecResults
+ * Called by Jasmine when reporting results for a test spec. It triggers the
+ * whole screenshot capture process and stores any relevant information.
+ *
+ * Parameters:
+ *     (Object) spec - The test spec to report.
+ */
+ScreenshotReporter.prototype.reportSpecResults =
+function reportSpecResults(spec) {
+	/* global browser */
+	var self = this
+		, results = spec.results()
+		, takeScreenshot
+		, finishReport;
+
+	if(!self.takeScreenShotsForSkippedSpecs && results.skipped) {
+		return;
+	}
+
+	takeScreenshot = !(self.takeScreenShotsOnlyForFailedSpecs && results.passed());
+
+	finishReport = function(png) {
+
+		browser.getCapabilities().then(function (capabilities) {
+			var descriptions = util.gatherDescriptions(
+					spec.suite
+					, [spec.description]
+				)
+
+
+				, baseName = self.pathBuilder(
+					spec
+					, descriptions
+					, results
+					, capabilities
+				)
+				, metaData = self.metaDataBuilder(
+					spec
+					, descriptions
+					, results
+					, capabilities
+				)
+
+				, screenShotFile = baseName + '.png'
+				, metaFile = baseName + '.json'
+				, screenShotPath = path.join(self.baseDirectory, screenShotFile)
+				, metaDataPath = path.join(self.baseDirectory, metaFile)
+
+				// pathBuilder can return a subfoldered path too. So extract the
+				// directory path without the baseName
+				, directory = path.dirname(screenShotPath);
+
+			metaData.screenShotFile = screenShotFile;
+			mkdirp(directory, function(err) {
+				if(err) {
+					throw new Error('Could not create directory ' + directory);
+				} else {
+					util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
+					if(takeScreenshot) {
+						util.storeScreenShot(png, screenShotPath);
+					}
+					if (!self.finalOptions.disableMetaData) {
+						util.storeMetaData(metaData, metaDataPath);
+					}
+				}
+			});
+		});
+
+	};
+
+	if (takeScreenshot) {
+
+		browser.takeScreenshot().then(function (png) {
+			finishReport(png);
+		});
+
+	} else {
+
+		finishReport();
+
+	}
 
 ScreenshotReporter.prototype.specDone = function (spec) {
     //console.log("##test[testFinished name='" + (spec.description) + "']");
