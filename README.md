@@ -1,7 +1,3 @@
-### This is a fork for jasmine2 compatibility ###
-As soon as https://github.com/jintoppy/protractor-html-screenshot-reporter/issues/44 is solved,
-there's no need for this fork
-
 # HTML Reporter with Screenshots for Protractor
 
 This is built on top of Screenshot Reporter for Protractor https://github.com/swissmanu/protractor-screenshot-reporter
@@ -94,7 +90,7 @@ Default is `false`.
 
 ### Screenshots only for failed test cases (optional)
  Also you can define if you want capture screenshots only from failed test cases using the `takeScreenShotsOnlyForFailedSpecs:` option:
-
+ 
  ```javascript
  new HtmlReporter({
     baseDirectory: '/tmp/screenshots'
@@ -102,13 +98,13 @@ Default is `false`.
  });
  ```
  If you set the value to `true`, the reporter for the passed test will still be generated, but, there will be no screenshot.
-
+ 
  Default is `false`.
 
 
 ### Add title for the html report (optional)
  Also you can define a document title for the html report generated using the `docTitle:` option:
-
+ 
  ```javascript
  new HtmlReporter({
     baseDirectory: '/tmp/screenshots'
@@ -120,7 +116,7 @@ Default is `Generated test report`.
 
 ### Change html report file name (optional)
  Also you can change document name for the html report generated using the `docName:` option:
-
+ 
  ```javascript
  new HtmlReporter({
     baseDirectory: '/tmp/screenshots'
@@ -131,7 +127,7 @@ Default is `report.html`.
 
 ### Option to override CSS file used in reporter (optional)
  You can change stylesheet used for the html report generated using the `cssOverrideFile:` option:
-
+ 
  ```javascript
  new HtmlReporter({
     baseDirectory: '/tmp/screenshots'
@@ -141,7 +137,7 @@ Default is `report.html`.
 
 ### Preserve base directory (optional)
  You can preserve the base directory using `preserveDirectory:` option:
-
+ 
  ```javascript
  new HtmlReporter({
     baseDirectory: '/tmp/screenshots'
@@ -154,14 +150,14 @@ Default is `false`.
 
 On running the task via grunt, screenshot reporter will be generating json and png files for each test.
 
-Now, you will also get a summary report, Stack trace information also.
+Now, you will also get a summary report, Stack trace information also. 
 
-With this postprocessing, you will get a json which has all the metadata, and also an html page showing the results.
+With this postprocessing, you will get a json which has all the metadata, and also an html page showing the results. 
 
 
 ![test report in html](https://raw.githubusercontent.com/jintoppy/protractor-html-screenshot-reporter/master/testreporter.png "test report")
 
-Please see the examples folder for a sample usage.
+Please see the examples folder for a sample usage. 
 
 For running the sample, do the following commands in the examples folder
 
@@ -172,7 +168,7 @@ $ grunt install
 $ grunt test:e2e
 ```
 
-After the test run, you can see that, a screenshots folder will be created with all the reports generated.
+After the test run, you can see that, a screenshots folder will be created with all the reports generated. 
 
 
 ## License

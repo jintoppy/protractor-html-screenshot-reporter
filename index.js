@@ -53,33 +53,36 @@ function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 				, version: capabilities.caps_.version
 			}
 		};
-	if(results.items_.length > 0) {
-		var result = results.items_[0];
-		if(!results.passed()){
-			var failedItem = _.where(results.items_,{passed_: false})[0];
-			if(failedItem){
-				metaData.message = failedItem.message || 'Failed';
-				metaData.trace = failedItem.trace? (failedItem.trace.stack || 'No Stack trace information') : 'No Stack trace information';
-			}
+  	if(results.items_.length > 0) {
+  		var result = results.items_[0];
+  		
+      if(!results.passed()) {
+  			var failedItem = _.where(results.items_,{passed_: false})[0];
+  			if(failedItem){
+  				metaData.message = failedItem.message || 'Failed';
+  				metaData.trace = failedItem.trace? (failedItem.trace.stack || 'No Stack trace information') : 'No Stack trace information';
+  			}
 
-	if(passed.length > 0 || failed.length > 0) {
-		var result = passed[0];
+      	if(passed.length > 0 || failed.length > 0) {
+      		var result = passed[0];
 
-		if(failed.length > 0) {
-			var messages = _.pluck(failed, 'message'),
-			      stacks = _.pluck(failed, 'stack');
+      		if(failed.length > 0) {
+      			var messages = _.pluck(failed, 'message'),
+      			      stacks = _.pluck(failed, 'stack');
 
-			//report all failures
-			metaData.message = messages.length && messages.join('\n') || 'Failed';
-			metaData.trace = stacks.length && stacks.join('\n') || 'No Stack trace information';
+      			//report all failures
+      			metaData.message = messages.length && messages.join('\n') || 'Failed';
+      			metaData.trace = stacks.length && stacks.join('\n') || 'No Stack trace information';
 
-		} else {
-			metaData.message = result && result.message || 'Passed';
-			metaData.trace = result && result.stack;
-		}
-	}
+      		} else {
+      			metaData.message = result && result.message || 'Passed';
+      			metaData.trace = result && result.stack;
+      		}
+      	}
+      }
+  }
 
-	return metaData;
+  return metaData;
 }
 
 
@@ -255,6 +258,8 @@ function reportSpecResults(spec) {
 		finishReport();
 
 	}
+};
+
 
 ScreenshotReporter.prototype.specDone = function (spec) {
     //console.log("##test[testFinished name='" + (spec.description) + "']");
