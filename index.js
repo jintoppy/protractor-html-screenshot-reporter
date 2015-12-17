@@ -113,7 +113,7 @@ function ScreenshotReporter(options) {
 	this.docTitle = options.docTitle || 'Generated test report';
 	this.docName = options.docName || 'report.html';
 	this.metaDataBuilder = options.metaDataBuilder || defaultMetaDataBuilder;
-	this.preserveDirectory = options.preserveDirectory || false;
+	this.preserveDirectory = options.preserveDirectory || true;
 	this.takeScreenShotsForSkippedSpecs =
 		options.takeScreenShotsForSkippedSpecs || false;
 		this.takeScreenShotsOnlyForFailedSpecs =
