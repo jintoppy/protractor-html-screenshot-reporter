@@ -1,19 +1,21 @@
-# HTML Reporter with Screenshots for Protractor
+# Angularized HTML Reporter with Screenshots for Protractor
 
-This is built on top of Screenshot Reporter for Protractor https://github.com/swissmanu/protractor-screenshot-reporter
+This is built on top of [protractor-html-screenshot-reporter](https://github.com/jintoppy/protractor-html-screenshot-reporter), which is built on top of [protractor-screenshot-reporter](https://github.com/swissmanu/protractor-screenshot-reporter).
+
+`protractor-angular-screenshot-reporter` still generates a HTML report, but it is Angular based and improves on the original formatting.
 
 
 ## Usage
-The `protractor-html-screenshot-reporter` module is available via npm:
+The `protractor-angular-screenshot-reporter` module is available via npm:
 
 ```bash
-$ npm install protractor-html-screenshot-reporter --save-dev
+$ npm install protractor-angular-screenshot-reporter --save-dev
 ```
 
-In your Protractor configuration file, register `protractor-html-screenshot-reporter` in Jasmine:
+In your Protractor configuration file, register `protractor-angular-screenshot-reporter` in Jasmine:
 
 ```javascript
-var HtmlReporter = require('protractor-html-screenshot-reporter');
+var HtmlReporter = require('protractor-angular-screenshot-reporter');
 
 exports.config = {
    // your config here ...
@@ -55,7 +57,7 @@ new HtmlReporter({
    }
 });
 ```
-If you omit the path builder, a [GUID](http://de.wikipedia.org/wiki/Globally_Unique_Identifier) is used by default instead.
+If you omit the path builder, a [GUID](http://en.wikipedia.org/wiki/Globally_Unique_Identifier) is used by default instead.
 
 
 ### Meta Data Builder (optional)
@@ -136,44 +138,52 @@ Default is `report.html`.
  ```
 
 ### Preserve base directory (optional)
- You can preserve the base directory using `preserveDirectory:` option:
+ You can preserve (or clear) the base directory using `preserveDirectory:` option:
  
  ```javascript
  new HtmlReporter({
     baseDirectory: '/tmp/screenshots'
-    , preserveDirectory: true
+    , preserveDirectory: false
  });
  ```
-Default is `false`.
+Default is `true`.
 
 ## HTML Reporter
 
-On running the task via grunt, screenshot reporter will be generating json and png files for each test.
+Upon running Protractor tests with the above config, the screenshot reporter will generate JSON and PNG files for each test.
 
-Now, you will also get a summary report, Stack trace information also. 
-
-With this postprocessing, you will get a json which has all the metadata, and also an html page showing the results. 
+In addition, a small HTML/Angular app is copied to the output directory, which cleanly lists the test results, any errors (with stacktraces), and screenshots.
 
 
-![test report in html](https://raw.githubusercontent.com/jintoppy/protractor-html-screenshot-reporter/master/testreporter.png "test report")
+![HTML / Angular Test Report](https://raw.githubusercontent.com/bcole/protractor-angular-screenshot-reporter/master/images/testreporter.png "test report")
 
-Please see the examples folder for a sample usage. 
+Click More Details to see more information about the test runs.
 
-For running the sample, do the following commands in the examples folder
+![Click More Details](https://raw.githubusercontent.com/bcole/protractor-angular-screenshot-reporter/master/images/moredetail.png "more detail")
+
+Click View Stacktrace to see details of the error (if the test failed).
+
+![View Stacktrace](https://raw.githubusercontent.com/bcole/protractor-angular-screenshot-reporter/master/images/stacktrace.png "view stacktrace")
+
+Click View Screenshot to see an image of the webpage at the end of the test.
+
+![View Screenshot](https://raw.githubusercontent.com/bcole/protractor-angular-screenshot-reporter/master/images/screenshot.png "view screenshot")
+
+Please see the `examples` folder for sample usage. 
+
+To run the sample, execute the following commands in the `examples` folder
 
 ```bash
 
 $ npm install
-$ grunt install
-$ grunt test:e2e
+$ protractor protractor.conf.js
 ```
 
 After the test run, you can see that, a screenshots folder will be created with all the reports generated. 
 
 
 ## License
-Copyright (c) 2014 Jinto Jose <jintoppy@gmail.com>
-Copyright (c) 2014 Manuel Alabor <manuel@alabor.me>
+Copyright (c) 2015 Brandon Cole <333qaz333@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
