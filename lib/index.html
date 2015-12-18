@@ -15,16 +15,26 @@
         }
     </style>
 </head>
-<body ng-controller="ScreenshotReportController as ctrl">
+<body ng-controller="ScreenshotReportController as ctrl" class="ng-cloak">
+
+<!-- Header -->
 <h2>
-    <span>
-        Test Results
-    </span>
+    Test Results
     <button class="btn btn-sm pull-right" ng-click="moreDetails = !moreDetails">
         <span ng-show="moreDetails">Less Detail</span>
         <span ng-hide="moreDetails">More Detail</span>
     </button>
 </h2>
+
+<!-- Pass/Fail counts -->
+<table class="table">
+    <tr>
+        <td class="success" ng-if="ctrl.passCount()" data-toggle="tooltip" title="Passed: {{ctrl.passCount()}} {{str = (ctrl.failCount() ? '' : '(no failures!)'); str}}" style="border: 0; width: {{ctrl.passCount() / (ctrl.passCount()+ctrl.failCount()) * 100}}%"> </td>
+        <td class="danger" ng-if="ctrl.failCount()" data-toggle="tooltip" title="Failed: {{ctrl.failCount()}}" style="border: 0"> </td>
+    </tr>
+</table>
+
+<!-- Test Results Table -->
 <table class="table">
     <thead>
         <tr class="active">
@@ -88,6 +98,7 @@
                                 <img style="width: 100%" src="{{ctrl.getFilename(result.screenShotFile)}}">
                             </div>
                             <div class="modal-footer">
+                                <a class="btn btn-primary" href="{{ctrl.getFilename(result.screenShotFile)}}" target="_blank">Open Image in New Tab <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             </div>
                         </div>
@@ -98,5 +109,10 @@
     </tbody>
 </table>
 {{ctrl.currentParent = "";""}}
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
 </body>
 </html>

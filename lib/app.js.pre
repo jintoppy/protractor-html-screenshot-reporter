@@ -17,4 +17,20 @@ angular.module('reportingApp', [])
         this.getFilename = function(str) {
             return str.replace(/^.*[\\\/]/, '');
         };
+        this.passCount = function() {
+            var passCount = 0;
+            for(var i in this.results) {
+                var result = this.results[i];
+                if(result.passed) passCount++;
+            }
+            return passCount;
+        };
+        this.failCount = function() {
+            var failCount = 0;
+            for(var i in this.results) {
+                var result = this.results[i];
+                if(!result.passed) failCount++;
+            }
+            return failCount;
+        };
         this.results =
