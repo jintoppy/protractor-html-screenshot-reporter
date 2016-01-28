@@ -192,6 +192,7 @@ function reportSpecResults(spec) {
 					util.storeMetaData(metaData, metaDataPath);
 				}
 			});
+			require('fs-symlink')(directory, path.resolve(directory, '..', '_latest'));
 		});
 	});
 
