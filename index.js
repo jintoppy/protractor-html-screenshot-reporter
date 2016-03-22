@@ -151,6 +151,10 @@ function reportSpecResults(spec) {
 		return;
 	}
 
+	if(self.takeScreenShotsOnlyForFailedSpecs && results.passed()) {
+		return;
+	}
+
 	browser.takeScreenshot().then(function (png) {
 		browser.getCapabilities().then(function (capabilities) {
 			var descriptions = util.gatherDescriptions(
