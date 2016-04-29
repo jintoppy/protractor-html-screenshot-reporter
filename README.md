@@ -2,7 +2,7 @@
 
 This is built on top of [protractor-html-screenshot-reporter](https://github.com/jintoppy/protractor-html-screenshot-reporter), which is built on top of [protractor-screenshot-reporter](https://github.com/swissmanu/protractor-screenshot-reporter).
 
-`protractor-angular-screenshot-reporter` still generates a HTML report, but it is Angular based and improves on the original formatting.
+`protractor-angular-screenshot-reporter` still generates a HTML report, but it is Angular-based and improves on the original formatting.
 
 
 ## Usage
@@ -12,7 +12,9 @@ The `protractor-angular-screenshot-reporter` module is available via npm:
 $ npm install protractor-angular-screenshot-reporter --save-dev
 ```
 
-In your Protractor configuration file, register `protractor-angular-screenshot-reporter` in Jasmine:
+In your Protractor configuration file, register `protractor-angular-screenshot-reporter` in Jasmine.
+
+#### Jasmine 1.x:
 
 ```javascript
 var HtmlReporter = require('protractor-angular-screenshot-reporter');
@@ -21,10 +23,28 @@ exports.config = {
    // your config here ...
 
    onPrepare: function() {
-      // Add a screenshot reporter and store screenshots to `/tmp/screnshots`:
+      // Add a screenshot reporter and store screenshots to `/tmp/screenshots`:
       jasmine.getEnv().addReporter(new HtmlReporter({
          baseDirectory: '/tmp/screenshots'
       }));
+   }
+}
+```
+
+#### Jasmine 2.x:
+Jasmine 2.x introduced changes to reporting that are not backwards compatible.  To use `protractor-angular-screenshot-reporter` with Jasmine 2, please make sure to use the **`getJasmine2Reporter()`** compatibility method introduced in `protractor-angular-screenshot-reporter@0.1.0`.
+
+```javascript
+var HtmlReporter = require('protractor-angular-screenshot-reporter');
+
+exports.config = {
+   // your config here ...
+
+   onPrepare: function() {
+      // Add a screenshot reporter and store screenshots to `/tmp/screenshots`:
+      jasmine.getEnv().addReporter(new HtmlReporter({
+         baseDirectory: '/tmp/screenshots'
+      }).getJasmine2Reporter());
    }
 }
 ```
@@ -58,6 +78,8 @@ new HtmlReporter({
 });
 ```
 If you omit the path builder, a [GUID](http://en.wikipedia.org/wiki/Globally_Unique_Identifier) is used by default instead.
+
+Caution: The format/structure of these parameters (spec, descriptions, results, capabilities) differs between Jasmine 2.x and Jasmine 1.x.
 
 
 ### Meta Data Builder (optional)
@@ -180,6 +202,14 @@ $ protractor protractor.conf.js
 ```
 
 After the test run, you can see that, a screenshots folder will be created with all the reports generated. 
+
+## Changelog
+### v0.1.0
+Support for Jasmine 2.x.
+Updating `protractor-angular-screenshot-reporter` to conform to the new custom_reporter.js format introduced by Jasmine 2.x, via compatibility method `getJasmine2Reporter`.  More details on this format can be found at: http://jasmine.github.io/2.1/custom_reporter.html
+
+### v0.0.x
+Support for Jasmine 1.x.
 
 
 ## License
