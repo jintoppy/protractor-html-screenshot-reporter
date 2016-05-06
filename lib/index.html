@@ -95,7 +95,7 @@
                                 <h4 class="modal-title" id="imageModalLabel{{$index}}">Screenshot: {{ctrl.getParent(result.description)}} {{ctrl.getShortDescription(result.description)}}</h4>
                             </div>
                             <div class="modal-body">
-                                <img style="width: 100%" src="{{ctrl.getFilename(result.screenShotFile)}}">
+                                <img style="width: 100%" ng-src="{{ctrl.getFilename(result.screenShotFile)}}">
                             </div>
                             <div class="modal-footer">
                                 <a class="btn btn-primary" href="{{ctrl.getFilename(result.screenShotFile)}}" target="_blank">Open Image in New Tab <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>
