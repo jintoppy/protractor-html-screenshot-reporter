@@ -29,7 +29,8 @@
 <!-- Pass/Fail counts -->
 <table class="table">
     <tr>
-        <td class="success" ng-if="ctrl.passCount()" data-toggle="tooltip" title="Passed: {{ctrl.passCount()}} {{str = (ctrl.failCount() ? '' : '(no failures!)'); str}}" style="border: 0; width: {{ctrl.passCount() / (ctrl.passCount()+ctrl.failCount()) * 100}}%"> </td>
+        <td class="success" ng-if="ctrl.passCount()" data-toggle="tooltip" title="Passed: {{ctrl.passCount()}} {{str = (ctrl.failCount() ? '' : '(no failures!)'); str}}" style="border: 0; width: {{ctrl.passCount() / (ctrl.passCount()+ctrl.failCount()+ctrl.pendingCount()) * 100}}%"> </td>
+        <td class="warning" ng-if="ctrl.pendingCount()" data-toggle="tooltip" title="Pending: {{ctrl.pendingCount()}}" style="border: 0; width: {{ctrl.pendingCount() / (ctrl.passCount()+ctrl.failCount()+ctrl.pendingCount()) * 100}}%"> </td>
         <td class="danger" ng-if="ctrl.failCount()" data-toggle="tooltip" title="Failed: {{ctrl.failCount()}}" style="border: 0"> </td>
     </tr>
 </table>
@@ -54,7 +55,7 @@
             <th class="suiteName" colspan="7">{{ctrl.currentParent = ctrl.getParent(result.description)}}</th>
         </tr>
 
-        <tr ng-class="{danger: !result.passed}">
+        <tr ng-class="{danger: !result.passed && !result.pending, warning: result.pending}">
             <td>{{ctrl.getShortDescription(result.description)}}</td>
             <td>{{result.passed}}</td>
             <td ng-show="moreDetails">{{result.browser.name}} {{result.browser.version}}</td>
@@ -63,7 +64,7 @@
             <td>{{result.message}}</td>
             <td>
                 <!-- Show stacktrace if failure -->
-                <div ng-if="!result.passed">
+                <div ng-if="!result.passed && !result.pending">
                     <button class="btn btn-default" data-toggle="modal" data-target="#modal{{$index}}">View Stack Trace</button>
                     <!-- Stacktrace Modal -->
                     <div class="modal fade" id="modal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{$index}}">
@@ -85,6 +86,7 @@
                 </div>
             </td>
             <td>
+              <div ng-if="!result.pending">
                 <button class="btn btn-default" data-toggle="modal" data-target="#imageModal{{$index}}">View Screenshot</button>
                 <!-- Screenshot Modal -->
                 <div class="modal fade" id="imageModal{{$index}}" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel{{$index}}">
@@ -104,6 +106,7 @@
                         </div>
                     </div>
                 </div>
+              </div>
             </td>
         </tr>
     </tbody>

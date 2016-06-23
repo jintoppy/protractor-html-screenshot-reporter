@@ -25,11 +25,19 @@ angular.module('reportingApp', [])
             }
             return passCount;
         };
+        this.pendingCount = function() {
+            var pendingCount = 0;
+            for(var i in this.results) {
+                var result = this.results[i];
+                if(result.pending) pendingCount++;
+            }
+            return pendingCount;
+        };
         this.failCount = function() {
             var failCount = 0;
             for(var i in this.results) {
                 var result = this.results[i];
-                if(!result.passed) failCount++;
+                if(!result.passed && !result.pending) failCount++;
             }
             return failCount;
         };

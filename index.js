@@ -75,6 +75,7 @@ function jasmine2MetaDataBuilder(spec, descriptions, results, capabilities) {
 	var metaData = {
 		description: descriptions.join(' ')
 		, passed: results.status == 'passed'
+		, pending: results.status == 'pending'
 		, os: capabilities.platform
 		, sessionId: capabilities['webdriver.remote.sessionid']
 		, browser: {
@@ -86,6 +87,8 @@ function jasmine2MetaDataBuilder(spec, descriptions, results, capabilities) {
 	if(results.status == 'passed') {
 		metaData.message = (results.passedExpectations[0] || {}).message || 'Passed';
 		metaData.trace = (results.passedExpectations[0] || {}).stack;
+	} else if(results.status == 'pending') {
+		metaData.message = results.pendingReason || 'Pending';
 	} else {
 		metaData.message = (results.failedExpectations[0] || {}).message || 'Failed';
 		metaData.trace = (results.failedExpectations[0] || {}).stack || 'No Stack trace information';
