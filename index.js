@@ -140,7 +140,7 @@ function ScreenshotReporter(options) {
 	this.docName = options.docName || 'report.html';
 	this.metaDataBuilder = options.metaDataBuilder || defaultMetaDataBuilder;
 	this.jasmine2MetaDataBuilder = options.jasmine2MetaDataBuilder || jasmine2MetaDataBuilder;
-	this.preserveDirectory = options.preserveDirectory || true;
+	this.preserveDirectory = typeof options.preserveDirectory !== 'undefined' ? options.preserveDirectory : true;
 	this.takeScreenShotsForSkippedSpecs =
 		options.takeScreenShotsForSkippedSpecs || false;
 		this.takeScreenShotsOnlyForFailedSpecs =
