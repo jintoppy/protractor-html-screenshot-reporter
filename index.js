@@ -27,7 +27,7 @@ function defaultPathBuilder(spec, descriptions, results, capabilities) {
  * Uses passed information to generate a meta data object which can be saved
  * along with a screenshot.
  * You do not have to add the screenshots file path since this will be appended
- * automatially.
+ * automatically.
  *
  * Parameters:
  *     (Object) spec - The spec currently reported
@@ -38,21 +38,21 @@ function defaultPathBuilder(spec, descriptions, results, capabilities) {
  *                             which executed the test case.
  *
  * Returns:
- *     (Object) containig meta data to store along with a screenshot
+ *     (Object) containing meta data to store along with a screenshot
  */
 function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 	var metaData = {
-			description: descriptions.join(' ')
-			, passed: results.passed()
-			, os: capabilities.caps_.platform
-			, sessionId: capabilities.caps_['webdriver.remote.sessionid']
-            , browser: {
-				name: capabilities.caps_.browserName
-				, version: capabilities.caps_.version
-			}
-		};
+		description: descriptions.join(' ')
+		, passed: results.passed()
+		, os: capabilities.caps_.platform
+		, sessionId: capabilities.caps_['webdriver.remote.sessionid']
+		, browser: {
+			name: capabilities.caps_.browserName
+			, version: capabilities.caps_.version
+		}
+	};
 
-    if(results.items_.length > 0) {
+	if(results.items_.length > 0) {
 		var result = results.items_[0];
 		if(!results.passed()){
 			var failedItem = _.where(results.items_,{passed_: false})[0];
@@ -66,6 +66,32 @@ function defaultMetaDataBuilder(spec, descriptions, results, capabilities) {
 			metaData.trace = result.trace.stack;
 		}
 
+	}
+
+	return metaData;
+}
+
+function jasmine2MetaDataBuilder(spec, descriptions, results, capabilities) {
+	var metaData = {
+		description: descriptions.join(' ')
+		, passed: results.status == 'passed'
+		, pending: results.status == 'pending'
+		, os: capabilities.get('platform')
+		, sessionId: capabilities.get('webdriver.remote.sessionid')
+		, browser: {
+			name: capabilities.get('browserName')
+			, version: capabilities.get('version')
+		}
+	};
+
+	if(results.status == 'passed') {
+		metaData.message = (results.passedExpectations[0] || {}).message || 'Passed';
+		metaData.trace = (results.passedExpectations[0] || {}).stack;
+	} else if(results.status == 'pending') {
+		metaData.message = results.pendingReason || 'Pending';
+	} else {
+		metaData.message = (results.failedExpectations[0] || {}).message || 'Failed';
+		metaData.trace = (results.failedExpectations[0] || {}).stack || 'No Stack trace information';
 	}
 
 	return metaData;
@@ -113,7 +139,8 @@ function ScreenshotReporter(options) {
 	this.docTitle = options.docTitle || 'Generated test report';
 	this.docName = options.docName || 'report.html';
 	this.metaDataBuilder = options.metaDataBuilder || defaultMetaDataBuilder;
-	this.preserveDirectory = options.preserveDirectory || false;
+	this.jasmine2MetaDataBuilder = options.jasmine2MetaDataBuilder || jasmine2MetaDataBuilder;
+	this.preserveDirectory = typeof options.preserveDirectory !== 'undefined' ? options.preserveDirectory : true;
 	this.takeScreenShotsForSkippedSpecs =
 		options.takeScreenShotsForSkippedSpecs || false;
 		this.takeScreenShotsOnlyForFailedSpecs =
@@ -134,6 +161,85 @@ function ScreenshotReporter(options) {
  	}
 }
 
+/**
+ * Returns a reporter that complies with the new Jasmine 2.x custom_reporter.js spec:
+ * http://jasmine.github.io/2.1/custom_reporter.html
+ */
+ScreenshotReporter.prototype.getJasmine2Reporter = function() {
+	var self = this;
+
+	return {
+		suiteNames: [],
+		suiteStarted: function(result){
+			this.suiteNames.push(result.description);
+		},
+		suiteDone: function(result){
+			this.suiteNames.pop();
+		},
+		specDone: function(result) {
+			if(!self.takeScreenShotsForSkippedSpecs && result.status == 'disabled') {
+				return;
+			}
+
+			// Enabling backwards-compat.  Construct Jasmine v1 style spec.suite.
+			function buildSuite(suiteNames, i) {
+				if(i<0) return null;
+				return {
+					description: suiteNames[i],
+					parentSuite: buildSuite(suiteNames, i-1)
+				}
+			}
+
+			var suite = buildSuite(this.suiteNames, this.suiteNames.length-1);
+
+			browser.takeScreenshot().then(function (png) {
+				browser.getCapabilities().then(function (capabilities) {
+					var descriptions = util.gatherDescriptions(
+							suite
+							, [result.description]
+						)
+
+						, baseName = self.pathBuilder(
+							null
+							, descriptions
+							, result
+							, capabilities
+						)
+						, metaData = self.jasmine2MetaDataBuilder(
+							null
+							, descriptions
+							, result
+							, capabilities
+						)
+
+						, screenShotFile = baseName + '.png'
+						, metaFile = baseName + '.json'
+						, screenShotPath = path.join(self.baseDirectory, screenShotFile)
+						, metaDataPath = path.join(self.baseDirectory, metaFile)
+
+					// pathBuilder can return a subfoldered path too. So extract the
+					// directory path without the baseName
+						, directory = path.dirname(screenShotPath);
+
+					metaData.screenShotFile = screenShotFile;
+					mkdirp(directory, function(err) {
+						if(err) {
+							throw new Error('Could not create directory ' + directory);
+						} else {
+							util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
+							if(!(self.takeScreenShotsOnlyForFailedSpecs && result.status == 'passed')) {
+								util.storeScreenShot(png, screenShotPath);
+							}
+							util.storeMetaData(metaData, metaDataPath);
+						}
+					});
+					require('fs-symlink')(directory, path.resolve(directory, '..', '_latest'));
+				});
+			});
+		}
+	};
+};
+
 /** Function: reportSpecResults
  * Called by Jasmine when reporting results for a test spec. It triggers the
  * whole screenshot capture process and stores any relevant information.
@@ -145,7 +251,7 @@ ScreenshotReporter.prototype.reportSpecResults =
 function reportSpecResults(spec) {
 	/* global browser */
 	var self = this
-		, results = spec.results()
+		, results = spec.results();
 
 	if(!self.takeScreenShotsForSkippedSpecs && results.skipped) {
 		return;
@@ -192,6 +298,7 @@ function reportSpecResults(spec) {
 					util.storeMetaData(metaData, metaDataPath);
 				}
 			});
+			require('fs-symlink')(directory, path.resolve(directory, '..', '_latest'));
 		});
 	});
 

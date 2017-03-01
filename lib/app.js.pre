@@ -1,0 +1,44 @@
+angular.module('reportingApp', [])
+    .controller('ScreenshotReportController', function() {
+        this.getParent = function(str) {
+            var arr = str.split('|');
+            str = "";
+            for(var i=arr.length-1; i>0; i--) {
+                str += arr[i] + " > ";
+            }
+            return str.slice(0, -3);
+        };
+        this.getShortDescription = function(str) {
+            return str.split('|')[0];
+        };
+        this.nToBr = function(str) {
+            return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+        };
+        this.getFilename = function(str) {
+            return str.replace(/^.*[\\\/]/, '');
+        };
+        this.passCount = function() {
+            var passCount = 0;
+            for(var i in this.results) {
+                var result = this.results[i];
+                if(result.passed) passCount++;
+            }
+            return passCount;
+        };
+        this.pendingCount = function() {
+            var pendingCount = 0;
+            for(var i in this.results) {
+                var result = this.results[i];
+                if(result.pending) pendingCount++;
+            }
+            return pendingCount;
+        };
+        this.failCount = function() {
+            var failCount = 0;
+            for(var i in this.results) {
+                var result = this.results[i];
+                if(!result.passed && !result.pending) failCount++;
+            }
+            return failCount;
+        };
+        this.results =

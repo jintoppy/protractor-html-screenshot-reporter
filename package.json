@@ -1,15 +1,16 @@
 {
-  "name": "protractor-html-screenshot-reporter",
-  "version": "0.0.21",
-  "description": "An npm module and grunt plugin which generates your Protractor test reports in HTML with screenshots",
+  "name": "protractor-angular-screenshot-reporter",
+  "version": "0.1.2",
+  "description": "An npm module and which generates your Protractor test reports in HTML (angular) with screenshots",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jintoppy/protractor-html-screenshot-reporter"
+    "url": "https://github.com/bcole/protractor-angular-screenshot-reporter"
   },
   "dependencies": {
     "mkdirp": "~0.3.5",
-    "underscore": "~1.6.0"
+    "underscore": "~1.6.0",
+    "fs-symlink": "~1.2.1"
   },
   "keywords": [
     "screenshot",
@@ -20,10 +21,10 @@
     "gruntplugin",
     "protractor html report"
   ],
-  "author": "Jinto Jose <jintoppy@gmail.com>",
+  "author": "Brandon Cole <333qaz333@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jintoppy/protractor-html-screenshot-reporter/issues"
+    "url": "https://github.com/bcole/protractor-angular-screenshot-reporter/issues"
   },
-  "homepage": "https://github.com/jintoppy/protractor-html-screenshot-reporter"
+  "homepage": "https://github.com/bcole/protractor-angular-screenshot-reporter"
 }
